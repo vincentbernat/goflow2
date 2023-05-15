@@ -426,20 +426,20 @@ func DecodeMessage(payload *bytes.Buffer) (interface{}, error) {
 		packetV5.Version = version
 		err = utils.BinaryDecoder(payload, &(packetV5.IPVersion))
 		if err != nil {
-			return packetV5, err
+			return nil, err
 		}
 		var ip []byte
 		if packetV5.IPVersion == 1 {
 			ip = make([]byte, 4)
 			err = utils.BinaryDecoder(payload, ip)
 			if err != nil {
-				return packetV5, err
+				return nil, err
 			}
 		} else if packetV5.IPVersion == 2 {
 			ip = make([]byte, 16)
 			err = utils.BinaryDecoder(payload, ip)
 			if err != nil {
-				return packetV5, err
+				return nil, err
 			}
 		} else {
 			return nil, NewErrorIPVersion(packetV5.IPVersion)
@@ -448,7 +448,7 @@ func DecodeMessage(payload *bytes.Buffer) (interface{}, error) {
 		packetV5.AgentIP = ip
 		err = utils.BinaryDecoder(payload, &packetV5.SubAgentId, &packetV5.SequenceNumber, &packetV5.Uptime, &packetV5.SamplesCount)
 		if err != nil {
-			return packetV5, err
+			return nil, err
 		}
 
 		if packetV5.SamplesCount > MAX_SAMPLES {
@@ -460,7 +460,7 @@ func DecodeMessage(payload *bytes.Buffer) (interface{}, error) {
 			header := SampleHeader{}
 			err = utils.BinaryDecoder(payload, &(header.Format), &(header.Length))
 			if err != nil {
-				return packetV5, err
+				return nil, err
 			}
 			if int(header.Length) > payload.Len() {
 				break
